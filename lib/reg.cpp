@@ -9,7 +9,9 @@
 *@buff   --- char*(out)
 *
 */
-HKEY hGKEY = NULL;
+HKEY hGKEY      = NULL;
+HKEY HKEY_ROOT  = HKEY_LOCAL_MACHINE;
+char *PKEY_PREX = "SOFTWARE";
 
 HKEY reg_open_key(char *subkey)
 {
@@ -20,17 +22,19 @@ HKEY reg_open_key(char *subkey)
     security.bInheritHandle = true;
     security.lpSecurityDescriptor = NULL;
     security.nLength = sizeof(security);
-    ok = ::RegOpenKeyEx(HKEY_LOCAL_MACHINE, (LPCTSTR)"SOFTWARE", 0, KEY_ALL_ACCESS, &hREGKEY);
+    ok = ::RegOpenKeyEx(HKEY_ROOT, (LPCTSTR)PKEY_PREX, 0, KEY_ALL_ACCESS, &hREGKEY);
     if(ERROR_SUCCESS == ok){
         printf("RegOpenKey --- ok\n");
-        ok = ::RegCreateKeyEx(hREGKEY, subkey, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, 
-                &security, 
-                &hREGKEY, 
-                &dw);
-        if(ERROR_SUCCESS == ok){
-            printf("RegCreateKeyEx --- ok\n");
-        }else{
-            printf("RegCreateKeyEx --- err\n");
+        if(NULL != subkey){
+            ok = ::RegCreateKeyEx(hREGKEY, subkey, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, 
+                    &security, 
+                    &hREGKEY, 
+                    &dw);
+            if(ERROR_SUCCESS == ok){
+                printf("RegCreateKeyEx --- ok\n");
+            }else{
+                printf("RegCreateKeyEx --- err\n");
+            }
         }
     }else{
         printf("RegOpenKey --- err\n");
@@ -89,4 +93,51 @@ int reg_get_value(char *subkey, char *key, char *buff, DWORD size)
         }
     }
     return ok;
+}
+
+/*
+*
+*
+*@subkey --- char*(in)
+*@name   --- char*(in)
+*
+*/
+int reg_del_value(char *subkey, char *name)
+{
+    int ok=0;
+    hGKEY = reg_open_key(subkey);
+    if(hGKEY){
+        ok = ::RegDeleteValue(hGKEY, name);
+        if(ERROR_SUCCESS == ok){
+            printf("RegDeleteValue --- ok\n");
+            return 0;
+        }else{
+            printf("RegDeleteValue --- err\n");
+            return 1;
+        }
+    }
+    return 1;
+}
+
+/*
+*
+*@subkey --- char*(in)
+*@key    --- char*(in)
+*
+*/
+int reg_del_key(char *subkey, char *key)
+{
+    int ok=0;
+    hGKEY = reg_open_key(subkey);
+    if(hGKEY){
+        ok = ::RegDeleteKey(hGKEY, key);
+        if(ERROR_SUCCESS == ok){
+            printf("RegDeleteKey --- ok\n");
+            return 0;
+        }else{
+            printf("RegDeleteKey --- err\n");
+            return 1;
+        }
+    }
+    return 1;
 }

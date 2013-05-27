@@ -204,10 +204,9 @@ int main(int argc, char* argv[])
     DWORD ok = 0;
     if(argc < 2) { //·ÖÅä·þÎñ³ÌÐò
         printf("invaild paraters!");
-        //reg_set_value(PIPNAME, "runs2", buff, 2*wcslen(buff)+1);
-        reg_set_value(PIPNAME, "start", "startÆô¶¯", strlen("startÆô¶¯")+1);
-        reg_set_value(PIPNAME, "stop",  "stopÍ£Ö¹",  strlen("stopÍ£Ö¹")+1);
-        //Sleep(3000);
+        // reg_set_value(PIPNAME, "start", "startÆô¶¯", strlen("startÆô¶¯")+1);
+        // reg_set_value(PIPNAME, "stop",  "stopÍ£Ö¹",  strlen("stopÍ£Ö¹")+1);
+        // reg_del_key(NULL, "piprun");
     }else {
         printf("start install service ... %s", argv[1]);
         char path_exe[128]   = {'\0'};
